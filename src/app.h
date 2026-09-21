@@ -140,6 +140,7 @@ namespace net {
     void syncTime();
     void runPortal();
     void ensureUp();
+    void drawPortalScreen(const char *status);   // src/portal_ui.cpp
 }
 
 // ------------------------------------------------------------------- http ---

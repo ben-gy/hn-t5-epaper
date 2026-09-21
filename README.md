@@ -32,6 +32,10 @@ the panel does.
 <td align="center"><img src="docs/screenshots/list_dark.png" width="200"><br><sub>Dark theme</sub></td>
 <td align="center"><img src="docs/screenshots/trmnl.png" width="200"><br><sub>Same code on a TRMNL (800×480, 1-bit)</sub></td>
 </tr>
+<tr>
+<td align="center"><img src="docs/screenshots/setup.png" width="200"><br><sub>First boot: Wi-Fi setup</sub></td>
+<td colspan="3"></td>
+</tr>
 </table>
 
 ## Install it on the device
@@ -190,7 +194,7 @@ the touch controller.
 | `src/probe_main.cpp` | bring-up test pattern (env `probe`) |
 | `src/http.cpp`, `net.cpp`, `button.cpp` | network and the physical button |
 | `emu/` | the macOS build: Arduino/ESP-IDF shims, host display, libcurl, HTTP server, device profiles |
-| `test/host/` | desktop harness for the extractor (`sh test/host/run.sh page.html`) |
+| `test/host/` | desktop checks: the reader-mode extractor (`run.sh page.html`), the setup screen (`portal.sh`), and `fits.sh`, which measures every string drawn at a fixed position and fails if one is wider than the page |
 | `lib/epdiy/`, `lib/SensorLib/` | vendored panel and touch drivers |
 | `fonts/`, `src/fonts/` | Roboto TTFs and the tables generated from them with LilyGo's `fontconvert.py` |
 

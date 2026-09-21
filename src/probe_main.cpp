@@ -22,7 +22,7 @@ static void drawPattern() {
     int W = gfx::W(), H = gfx::H();
     gfx::drawText(fonts::md, "TOP of screen - HN reader probe", 24, 48);
     gfx::hline(24, 60, W - 48, gfx::inkC());
-    gfx::drawText(fonts::sm, "If this reads the right way up, orientation is correct.", 24, 96, TONE_DIM);
+    gfx::drawText(fonts::sm, "Right way up? Then orientation is correct.", 24, 96, TONE_DIM);
 
     // 16-level ramp, black on the left
     for (int i = 0; i < 16; i++) gfx::rect(24 + i * 30, 120, 29, 60, (uint8_t)(i * 17));
@@ -30,9 +30,9 @@ static void drawPattern() {
     gfx::drawText(fonts::meta, "16 greys, black to white", 24, 204, TONE_DIM);
 
     gfx::drawText(fonts::titleBold, "Bold title face at list size", 24, 260);
-    gfx::drawText(fonts::bodyM, "Body text at the default reading size. Tap anywhere:", 24, 300);
-    gfx::drawText(fonts::bodyM, "a dot is drawn where the panel thinks you touched,", 24, 332);
-    gfx::drawText(fonts::bodyM, "and the raw coordinates go to the serial port.", 24, 364);
+    gfx::drawText(fonts::bodyM, "Reading size. Tap anywhere: a dot is drawn", 24, 300);
+    gfx::drawText(fonts::bodyM, "where the panel thinks you touched, and the", 24, 332);
+    gfx::drawText(fonts::bodyM, "raw coordinates go to the serial port.", 24, 364);
 
     gfx::frame(24, 400, W - 48, H - 400 - 70, gfx::ruleC());
     gfx::drawText(fonts::meta, "corner markers:", 30, 424, TONE_DIM);

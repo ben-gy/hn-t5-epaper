@@ -2,7 +2,7 @@
 
 namespace button {
 
-static const int PIN = BUTTON_1;          // GPIO21, active LOW (only user button)
+static const int PIN = BUTTON_1;          // BOOT (GPIO0), active LOW
 static const uint32_t DEBOUNCE_MS = 25;
 static const uint32_t LONG_MS     = 600;
 static const uint32_t DOUBLE_MS   = 320;

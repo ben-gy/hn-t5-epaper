@@ -51,31 +51,6 @@ static WebServer *server = nullptr;
 static DNSServer *dns = nullptr;
 static String scanOptions;
 
-static void drawPortalScreen(const char *status) {
-    gfx::clearBuffer();
-    int y = 70;
-    gfx::drawText(fonts::xl, "Wi-Fi setup", MARGIN_X, y);
-    y += 30;
-    gfx::hline(MARGIN_X, y, CONTENT_W, gfx::inkC());
-    y += 54;
-
-    gfx::drawText(fonts::md, "1.  Join this Wi-Fi network from your phone or laptop:", MARGIN_X, y);
-    y += 56;
-    gfx::rect(MARGIN_X + 28, y - 40, gfx::textW(fonts::lg, AP_SSID) + 28, 56, gfx::faintC());
-    gfx::drawText(fonts::lg, AP_SSID, MARGIN_X + 42, y);
-    y += 62;
-
-    gfx::drawText(fonts::md, "2.  A setup page should open by itself. If it does not,", MARGIN_X, y);
-    y += 44;
-    gfx::drawText(fonts::md, "     browse to  http://192.168.4.1", MARGIN_X, y);
-    y += 56;
-    gfx::drawText(fonts::md, "3.  Choose your network, enter the password, press Save.", MARGIN_X, y);
-
-    gfx::hline(MARGIN_X, EPD_HEIGHT - FOOTER_H, CONTENT_W, gfx::ruleC());
-    gfx::drawText(fonts::sm, status, MARGIN_X, EPD_HEIGHT - 14, TONE_DIM);
-    gfx::flushFull();
-}
-
 static String htmlEscape(const String &in) {
     String o;
     for (size_t i = 0; i < in.length(); i++) {
@@ -166,7 +141,7 @@ void runPortal() {
     });
     server->begin();
 
-    drawPortalScreen("Waiting for setup...  Hold the button 3s to skip.");
+    drawPortalScreen("Waiting for setup. Hold BOOT 3s to skip.");
 
     // Stay here until credentials are saved (handleSave reboots), or the user
     // holds the button for 3s to keep whatever is already stored.
