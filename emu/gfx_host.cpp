@@ -2,33 +2,30 @@
 // renderer (font.c), so text is pixel-identical to the panel. "Flushing" just
 // bumps a version number the web page polls.
 #include "emu.h"
-#include "roboto12.h"
-#include "roboto18.h"
-#include "roboto32.h"
-#include "firasans.h"
-#include "roboto18bold.h"
-#include "roboto13bold.h"
-#include "roboto8.h"
-#include "roboto10.h"
-#include "roboto11.h"
-#include "roboto13.h"
-#include "roboto16.h"
+#include "fonts/roboto8.h"
+#include "fonts/roboto9.h"
+#include "fonts/roboto11.h"
+#include "fonts/roboto13.h"
+#include "fonts/roboto13bold.h"
+#include "fonts/roboto16.h"
+#include "fonts/roboto18.h"
+#include "fonts/roboto28.h"
 
 volatile int emu_frameVersion = 0;
 extern "C" int epd_fb_width = 960;
 extern "C" int epd_fb_height = 540;
 
 namespace fonts {
-    const GFXfont *sm = &Roboto12;
-    const GFXfont *md = &Roboto18;
-    const GFXfont *lg = &FiraSans;
-    const GFXfont *xl = &Roboto32;
-    const GFXfont *title = &Roboto13;          // metrics for title rows
+    const GFXfont *sm = &Roboto11;          // 30 px line: status, bar labels
+    const GFXfont *md = &Roboto16;          // 44: messages, busy box
+    const GFXfont *lg = &Roboto18;          // 49: message titles
+    const GFXfont *xl = &Roboto28;          // 77: setup screen title
+    const GFXfont *title = &Roboto13;       // metrics for title rows
     const GFXfont *titleBold = &Roboto13Bold;
-    const GFXfont *meta = &Roboto10;
-    const GFXfont *bodyS = &Roboto8;    // 22 px line
-    const GFXfont *bodyM = &Roboto10;   // 25
-    const GFXfont *bodyL = &Roboto11;   // 30
+    const GFXfont *meta = &Roboto9;         // 25: facts lines, bylines
+    const GFXfont *bodyS = &Roboto8;        // 22
+    const GFXfont *bodyM = &Roboto11;       // 30
+    const GFXfont *bodyL = &Roboto13;       // 36
 }
 
 namespace gfx {
@@ -180,17 +177,6 @@ void frame(int x, int y, int w, int h, uint8_t color) {
 }
 
 }  // namespace gfx
-
-// font.c links against these two panel-driver symbols.
-extern "C" void epd_draw_hline(int32_t x, int32_t y, int32_t length, uint8_t color, uint8_t *framebuffer) {
-    for (int32_t i = 0; i < length; i++) {
-        int32_t px = x + i;
-        if (px < 0 || px >= EPD_WIDTH || y < 0 || y >= EPD_HEIGHT) continue;
-        uint8_t *p = &framebuffer[(size_t)y * (EPD_WIDTH / 2) + px / 2];
-        if (px & 1) *p = (*p & 0x0F) | (color & 0xF0); else *p = (*p & 0xF0) | (color >> 4);
-    }
-}
-extern "C" void epd_draw_image(Rect_t, uint8_t *, DrawMode_t) { /* direct-to-panel path; unused on host */ }
 
 void gfx_host_setSize(int w, int h) {
     epd_fb_width = w;

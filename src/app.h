@@ -1,10 +1,8 @@
 #pragma once
 #include <Arduino.h>
 #include <vector>
-extern "C" {
-#include "epd_driver.h"
-}
-#include "utilities.h"
+#include "glyph.h"
+#include "pins.h"
 
 // ---------------------------------------------------------------- config ---
 #define AP_SSID          "HN-Reader-Setup"
@@ -131,6 +129,7 @@ namespace store {
     int   textSize();      void setTextSize(int v);      // 0 = S, 1 = M, 2 = L
     bool  openArticle();   void setOpenArticle(bool v);
     int   lastFeed();      void setLastFeed(int v);
+    int   frontlight();    void setFrontlight(int v);  // 0 off .. 3 high
 }
 
 // -------------------------------------------------------------------- net ---
@@ -175,3 +174,5 @@ namespace button {
 namespace ui { void begin(); void tick(); void tap(int x, int y); }
 
 uint32_t batteryMilliVolts();
+int      batteryPercent();               // -1 when no gauge
+namespace light { void set(int level); }

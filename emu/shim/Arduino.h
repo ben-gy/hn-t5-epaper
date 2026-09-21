@@ -11,6 +11,7 @@
 #include <thread>
 #include <algorithm>
 #include <cstdarg>
+#include "esp_attr.h"
 
 using std::min;
 using std::max;

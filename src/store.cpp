@@ -204,5 +204,7 @@ bool openArticle()        { return prefs.getBool("openart", false); }
 void setOpenArticle(bool v){ prefs.putBool("openart", v); }
 int  lastFeed()           { return prefs.getInt("feed", 0); }
 void setLastFeed(int v)   { prefs.putInt("feed", v); }
+int  frontlight()         { return prefs.getInt("light", 0); }
+void setFrontlight(int v) { prefs.putInt("light", v); }
 
 }  // namespace store

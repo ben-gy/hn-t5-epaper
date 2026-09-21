@@ -355,11 +355,12 @@ static String statusRight(const String &pageInfo) {
     String right;
     if (pageInfo.length()) right += pageInfo + "   ";
     if (!net::isUp()) right += "offline   ";
-    uint32_t mv = batteryMilliVolts();
-    if (mv > 2500) {
-        int pct = (int)((mv - 3300) * 100 / (4200 - 3300));
-        right += String(pct < 0 ? 0 : (pct > 100 ? 100 : pct)) + "%   ";
+    int pct = batteryPercent();
+    if (pct < 0) {
+        uint32_t mv = batteryMilliVolts();
+        if (mv > 2500) pct = (int)((mv - 3300) * 100 / (4200 - 3300));
     }
+    if (pct >= 0) right += String(pct > 100 ? 100 : pct) + "%   ";
     time_t now = time(nullptr);
     if (now > 1600000000) {
         struct tm tmv;
@@ -732,11 +733,14 @@ static void renderFeeds(bool full) {
 }
 
 static void renderSettings(bool full) {
+    static const char *LIGHT[4] = {"Off", "Low", "Mid", "High"};
     std::vector<String> rows = {"Theme", "Text size", "Open story with", "Mark this feed as read",
-                                "Clear read history", "Clear cached feeds", "Wi-Fi setup", "Sleep now"};
+                                "Clear read history", "Clear cached feeds", "Wi-Fi setup", "Sleep now",
+                                "Frontlight"};
     std::vector<String> values = {store::dark() ? "Dark" : "Light", sizeName(),
                                   store::openArticle() ? "Article" : "Comments", "",
-                                  String(store::readCount()) + " stories", "", "", ""};
+                                  String(store::readCount()) + " stories", "", "", "",
+                                  LIGHT[store::frontlight() & 3]};
     renderMenu("Settings", rows, {}, values, -1, full);
 }
 
@@ -781,11 +785,13 @@ static void goSleep() {
     rtcBookmarks = inBookmarks; rtcValid = true;
     store::setLastFeed(feed);
 
+    light::set(0);
     WiFi.disconnect(true);
     WiFi.mode(WIFI_OFF);
-    rtc_gpio_pullup_en((gpio_num_t)BUTTON_1);
-    rtc_gpio_pulldown_dis((gpio_num_t)BUTTON_1);
-    esp_sleep_enable_ext0_wakeup((gpio_num_t)BUTTON_1, 0);
+    rtc_gpio_pullup_en((gpio_num_t)PIN_TOUCH_INT);
+    rtc_gpio_pulldown_dis((gpio_num_t)PIN_TOUCH_INT);
+    esp_sleep_enable_ext0_wakeup((gpio_num_t)PIN_TOUCH_INT, 0);     // a tap wakes it
+    esp_sleep_enable_ext1_wakeup(1ULL << BUTTON_1, ESP_EXT1_WAKEUP_ALL_LOW);
     delay(50);
     esp_deep_sleep_start();
 }
@@ -962,6 +968,7 @@ static void activateSettings(const Target &t) {
         case 5: store::clearCache(); stories.clear(); break;
         case 6: net::runPortal(); delay(100); ESP.restart(); break;
         case 7: goSleep(); break;
+        case 8: store::setFrontlight((store::frontlight() + 1) % 4); light::set(store::frontlight()); break;
     }
     renderSettings(true);
 }
@@ -1044,7 +1051,8 @@ void begin() {
     applyTheme();
     lastInput = millis();
 
-    bool woke = esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0;
+    int cause = esp_sleep_get_wakeup_cause();
+    bool woke = cause == ESP_SLEEP_WAKEUP_EXT0 || cause == ESP_SLEEP_WAKEUP_EXT1;
     if (woke && rtcValid) {
         feed = (Feed)constrain(rtcFeed, 0, FEED_COUNT - 1);
         inBookmarks = rtcBookmarks;
