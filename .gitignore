@@ -1,0 +1,7 @@
+.pio/
+emu/build/
+emu/data/
+probe/.pio/
+*.bmp
+*.gen.h
+.DS_Store
